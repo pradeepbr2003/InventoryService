@@ -12,6 +12,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import static com.accenture.product.enums.UrlEnum.PRODUCTS_URL;
+import static com.accenture.product.enums.UrlEnum.PRODUCT_FORMAT;
+
 @Service
 public class InventoryRemoteService {
 
@@ -20,7 +23,8 @@ public class InventoryRemoteService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<ProductDTO> invokeGetProductService(String productUrl) {
+    public List<ProductDTO> invokeGetProductService(String productCode) {
+        String productUrl = String.format(PRODUCT_FORMAT.value(), PRODUCTS_URL.value(), productCode);
         LOG.info("invokeGetProductService : {}", productUrl);
         ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
                 productUrl,
@@ -32,16 +36,15 @@ public class InventoryRemoteService {
         return response.getBody();
     }
 
-    public String invokeRemoveProductService(String productUrl) {
-        LOG.info("invokeRemoveProductService : {}", productUrl);
-        ResponseEntity<String> response = restTemplate.exchange(
-                productUrl,
-                HttpMethod.DELETE,
+    public List<ProductDTO> invokeGetProductService() {
+        LOG.info("invokeGetProductService : {}", PRODUCTS_URL.value());
+        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
+                PRODUCTS_URL.value(),
+                HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {
                 }
         );
         return response.getBody();
     }
-
 }

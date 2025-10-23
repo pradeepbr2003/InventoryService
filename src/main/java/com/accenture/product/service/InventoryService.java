@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.accenture.product.enums.UrlEnum.PRODUCTS_URL;
-import static com.accenture.product.enums.UrlEnum.PRODUCT_FORMAT;
 
 @Service
 public class InventoryService {
@@ -41,15 +40,13 @@ public class InventoryService {
 
     public InventoryDTO getInventory(Long code) {
         Inventory inventory = invRepository.findById(code).orElseThrow(() -> new RuntimeException("No Inventory found"));
-        String productUrl = String.format(PRODUCT_FORMAT.value(), PRODUCTS_URL.value(), inventory.getProductId());
-        List<ProductDTO> products = invRemoteService.invokeGetProductService(productUrl);
+        List<ProductDTO> products = invRemoteService.invokeGetProductService(inventory.getProductId());
         return inventoryUtil.convertDto(inventory, products.get(0));
     }
 
     public InventoryDTO findInventoryByProductCode(String productCode) {
         Inventory inventory = invRepository.findByProductId(productCode).orElseThrow(() -> new RuntimeException(String.format("Inventory not found for product : %s", productCode)));
-        String productUrl = String.format(PRODUCT_FORMAT.value(), PRODUCTS_URL.value(), inventory.getProductId());
-        List<ProductDTO> products = invRemoteService.invokeGetProductService(productUrl);
+        List<ProductDTO> products = invRemoteService.invokeGetProductService(inventory.getProductId());
         ProductDTO product = products.get(0);
         return inventoryUtil.convertDto(inventory, product);
     }
@@ -80,9 +77,7 @@ public class InventoryService {
     public String removeInventory(Long code) {
         Inventory inventory = invRepository.findById(code).orElseThrow(() -> new RuntimeException("No Inventory found"));
         invRepository.delete(inventory);
-        String productUrl = String.format(PRODUCT_FORMAT.value(), PRODUCTS_URL.value(), inventory.getProductId());
-        String response = invRemoteService.invokeRemoveProductService(productUrl);
-        return String.format("%n Successfully deleted inventory %s And also %s %n", inventory.getProductId(), response);
+        return String.format("%n Successfully deleted inventory %s", inventory);
     }
 
     public InventoryDTO updateInventory(Long code, Integer quantity) {
@@ -91,11 +86,9 @@ public class InventoryService {
             throw new RuntimeException(String.format("Available stock : %d but expected : %d", inventory.getQuantity(), quantity));
         }
         inventory.setQuantity((inventory.getQuantity() - quantity));
-        String productUrl = String.format(PRODUCT_FORMAT.value(), PRODUCTS_URL.value(), inventory.getProductId());
-        List<ProductDTO> products = invRemoteService.invokeGetProductService(productUrl);
+        List<ProductDTO> products = invRemoteService.invokeGetProductService(inventory.getProductId());
         ProductDTO prod = products.get(0);
         invRepository.save(inventory);
         return inventoryUtil.convertDto(inventory, prod);
     }
-
 }
