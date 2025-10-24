@@ -1,0 +1,5 @@
+inventory:
+  deletedMessage: "%n Successfully deleted inventory %s"
+  stockNotAvailable: "Available stock : %d but expected : %d"
+  notFoundForProduct: "Inventory not found for product : %s"
+  notFound: "No Inventory found"

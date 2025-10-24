@@ -1,0 +1,4 @@
+product:
+  service:
+    url: "http://localhost:8080/product"
+    formatUrl: "%s?code=%s"

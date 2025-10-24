@@ -1,5 +1,6 @@
 package com.accenture.product.service;
 
+import com.accenture.product.config.InventoryPropUrlConfig;
 import com.accenture.product.dto.ProductDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static com.accenture.product.enums.UrlEnum.PRODUCTS_URL;
-import static com.accenture.product.enums.UrlEnum.PRODUCT_FORMAT;
-
 @Service
 public class InventoryRemoteService {
 
@@ -23,8 +21,11 @@ public class InventoryRemoteService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private InventoryPropUrlConfig invPropUrlConfig;
+
     public List<ProductDTO> invokeGetProductService(String productCode) {
-        String productUrl = String.format(PRODUCT_FORMAT.value(), PRODUCTS_URL.value(), productCode);
+        String productUrl = invPropUrlConfig.getProductByCodeUrl(productCode);
         LOG.info("invokeGetProductService : {}", productUrl);
         ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
                 productUrl,
@@ -37,9 +38,9 @@ public class InventoryRemoteService {
     }
 
     public List<ProductDTO> invokeGetProductService() {
-        LOG.info("invokeGetProductService : {}", PRODUCTS_URL.value());
+        LOG.info("invokeGetProductService : {}", invPropUrlConfig.getUrl());
         ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
-                PRODUCTS_URL.value(),
+                invPropUrlConfig.getUrl(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {
