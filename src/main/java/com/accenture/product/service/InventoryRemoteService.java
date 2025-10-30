@@ -1,7 +1,9 @@
 package com.accenture.product.service;
 
 import com.accenture.product.config.InventoryPropUrlConfig;
+import com.accenture.product.config.InventoryResponseMsgConfig;
 import com.accenture.product.dto.ProductDTO;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class InventoryRemoteService {
     @Autowired
     private InventoryPropUrlConfig invPropUrlConfig;
 
+    @Autowired
+    private InventoryResponseMsgConfig invResMsgConfig;
+
     public List<ProductDTO> invokeGetProductService(String productCode) {
         String productUrl = invPropUrlConfig.getProductByCodeUrl(productCode);
         LOG.info("invokeGetProductService : {}", productUrl);
@@ -37,6 +42,7 @@ public class InventoryRemoteService {
         return response.getBody();
     }
 
+    @CircuitBreaker(name = "myServiceCircuitBreaker", fallbackMethod = "serviceDown")
     public List<ProductDTO> invokeGetProductService() {
         LOG.info("invokeGetProductService : {}", invPropUrlConfig.getUrl());
         ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
@@ -47,5 +53,9 @@ public class InventoryRemoteService {
                 }
         );
         return response.getBody();
+    }
+
+    public List<ProductDTO> serviceDown(Throwable e) {
+        throw new RuntimeException(invResMsgConfig.getProductServiceDown());
     }
 }

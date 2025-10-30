@@ -3,3 +3,4 @@ inventory:
   stockNotAvailable: "Available stock : %d but expected : %d"
   notFoundForProduct: "Inventory not found for product : %s"
   notFound: "No Inventory found"
+  productServiceDown: "Product Service is down, Please wait for some time!"

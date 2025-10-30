@@ -83,6 +83,11 @@ public class InventoryService {
         return invResMsgConfig.inventoryDeleted(inventory);
     }
 
+    public String removeAllInventory() {
+        invRepository.deleteAll();
+        return invResMsgConfig.getDeletedMessage();
+    }
+
     public InventoryDTO updateInventory(Long code, Integer quantity) {
         Inventory inventory = invRepository.findById(code).orElseThrow(() -> new RuntimeException(invResMsgConfig.getNotFound()));
         if (inventory.getQuantity() < quantity) {
