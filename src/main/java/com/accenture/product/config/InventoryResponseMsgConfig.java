@@ -20,6 +20,7 @@ public class InventoryResponseMsgConfig {
     private String stockNotAvailable;
     private String notFoundForProduct;
     private String notFound;
+    private String productServiceDown;
 
     public String inventoryDeleted(Inventory inventory) {
         return String.format(deletedMessage, inventory);

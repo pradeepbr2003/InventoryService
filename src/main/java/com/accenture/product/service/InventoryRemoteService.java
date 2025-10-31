@@ -1,6 +1,7 @@
 package com.accenture.product.service;
 
 import com.accenture.product.config.InventoryPropUrlConfig;
+import com.accenture.product.config.InventoryResponseMsgConfig;
 import com.accenture.product.dto.ProductDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class InventoryRemoteService {
     @Autowired
     private InventoryPropUrlConfig invPropUrlConfig;
 
+    @Autowired
+    private InventoryResponseMsgConfig invResMsgConfig;
+
     public List<ProductDTO> invokeGetProductService(String productCode) {
         String productUrl = invPropUrlConfig.getProductByCodeUrl(productCode);
         LOG.info("invokeGetProductService : {}", productUrl);
@@ -39,13 +43,15 @@ public class InventoryRemoteService {
 
     public List<ProductDTO> invokeGetProductService() {
         LOG.info("invokeGetProductService : {}", invPropUrlConfig.getUrl());
-        ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(
-                invPropUrlConfig.getUrl(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-        return response.getBody();
+        List<ProductDTO> products = null;
+        try {
+            ResponseEntity<List<ProductDTO>> response = restTemplate.exchange(invPropUrlConfig.getUrl(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+            });
+            products = response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException(invResMsgConfig.getProductServiceDown());
+        }
+        return products;
+
     }
 }
