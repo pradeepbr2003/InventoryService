@@ -40,7 +40,7 @@ public class InventoryController {
     }
 
     @DeleteMapping
-    public String removeInventory(@RequestParam Long code) {
+    public String removeInventory(@RequestParam(required = false, defaultValue = "0") Long code) {
         return inventoryService.removeInventory(code);
     }
 

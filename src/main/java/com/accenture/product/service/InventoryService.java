@@ -78,8 +78,14 @@ public class InventoryService {
     }
 
     public String removeInventory(Long code) {
-        Inventory inventory = invRepository.findById(code).orElseThrow(() -> new RuntimeException(invResMsgConfig.getNotFound()));
-        invRepository.delete(inventory);
+        Inventory inventory = null;
+        if (code == 0) {
+            invRepository.deleteAll();
+        } else {
+            inventory = invRepository.findById(code).orElseThrow(() -> new RuntimeException(invResMsgConfig.getNotFound()));
+            invRepository.delete(inventory);
+        }
+
         return invResMsgConfig.inventoryDeleted(inventory);
     }
 

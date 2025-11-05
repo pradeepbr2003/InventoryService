@@ -54,4 +54,15 @@ public class InventoryRemoteService {
         return products;
 
     }
+
+    public void invokeDeleteProductService() {
+        LOG.info("invokeDeleteProductService : {}", invPropUrlConfig.getUrl());
+        try {
+            restTemplate.delete(invPropUrlConfig.getUrl());
+        } catch (Exception e) {
+            throw new RuntimeException(invResMsgConfig.getProductServiceDown());
+        } finally {
+            return;
+        }
+    }
 }
