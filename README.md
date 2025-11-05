@@ -12,6 +12,7 @@ Please use url  in browser http://localhost:8081/h2-console and login as
 
 ### In application.yml , please specify the configuration as below 
 
+-------------------------------------------------------------------
 spring:
   datasource:
     url: jdbc:h2:mem:inv_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -27,7 +28,7 @@ spring:
       enabled: true
       path: /h2-console
 JDBC URL : jdbc:h2:mem:inv_db
-
+-----------------------------------------------------------------------
 
 ## TO DO (To connect to same in memory db, we need to run h2 server externally as below)
 
